@@ -1,0 +1,73 @@
+module datapath( clk, rst, IR_write, ld_A, ld_B, IorD, MtoS, src_A, src_B,
+                 pc_src,mem_read, mem_write, pc_write_cond, pc_write, alu_op,
+                 push, pop, tos, opcode);
+                 
+  input clk, rst, IR_write, ld_A, ld_B, IorD, MtoS, pc_src, src_A, src_B ;
+  input mem_read, mem_write, pc_write_cond, pc_write;
+  input [1:0] alu_op;
+  input push, pop, tos;
+  output [2:0] opcode ;
+  
+  
+  
+  
+  wire [4:0] pc_in, pc_out;
+  wire [7:0] mem_out, instruction, memory_data ;
+  wire [7:0] stack_out, stack_in;
+  wire [7:0] A_out, B_out, Z_out ;
+  wire [4:0] data_address, mem_address ;
+  wire [7:0] pc_out_extend ;
+  wire [7:0] out_alu_reg ;
+  wire [7:0] alu_src1, alu_src2 ;
+  wire [7:0] alu_result ;
+  wire [4:0] pc_jump_address , pc_from_alu_result ;
+  wire signal_zero ;
+  
+  
+  
+  
+  
+  
+  assign signal_zero = ~(|Z_out) ;
+  assign data_address = instruction[4:0] ;
+  assign pc_out_extend = { 1'b0 , 1'b0 , 1'b0 , pc_out} ;
+  assign pc_jump_address = instruction[4:0] ;
+  assign pc_from_alu_result = alu_result[4:0] ;
+  assign ld_pc = ( signal_zero & pc_write_cond ) | pc_write ;
+  assign opcode = instruction[7:5] ;
+  
+  
+  
+  
+
+  
+  //registers
+  register #(.WORD_LENGTH(5)) PC_reg(.clk(clk), .rst(rst), .in(pc_in), .out(pc_out), .ld(ld_pc));
+  register #(.WORD_LENGTH(8)) IR_reg(.clk(clk), .rst(rst), .in(mem_out), .out(instruction), .ld(IR_write));
+  register #(.WORD_LENGTH(8)) MDR_reg(.clk(clk), .rst(rst), .in(mem_out), .out(memory_data), .ld(1));
+  register #(.WORD_LENGTH(8)) A_reg(.clk(clk), .rst(rst), .in(stack_out), .out(A_out), .ld(ld_A));
+  register #(.WORD_LENGTH(8)) B_reg(.clk(clk), .rst(rst), .in(stack_out), .out(B_out), .ld(ld_B));
+  register #(.WORD_LENGTH(8)) Z_reg(.clk(clk), .rst(rst), .in(stack_out), .out(Z_out), .ld(1));
+  register #(.WORD_LENGTH(8)) alu_reg(.clk(clk), .rst(rst), .in(alu_result), .out(out_alu_reg), .ld(1));
+  
+  //multiplexer
+  multiplexer #(.WORD_LENGTH(5)) mux_memory(.sel(IorD), .first(data_address), .second(pc_out), .out(mem_address));
+  multiplexer #(.WORD_LENGTH(8)) mux_stack(.sel(MtoS), .first(memory_data), .second(out_alu_reg), .out(stack_in));
+  multiplexer #(.WORD_LENGTH(8)) mux_alu_src1(.sel(src_A), .first(pc_out_extend), .second(A_out), .out(alu_src1));
+  multiplexer #(.WORD_LENGTH(8)) mux_alu_src2(.sel(src_B), .first(8'b00000001), .second(B_out), .out(alu_src2));
+  multiplexer #(.WORD_LENGTH(5)) mux_pc(.sel(pc_src), .first(pc_jump_address), .second(pc_from_alu_result), .out(pc_in));
+  
+  
+  //memory
+  memory memory(.clk(clk), .address(mem_address), .write_data(A_out) , .read_data(mem_out), .mem_read(mem_read), .mem_write(mem_write)); 
+  
+  //alu
+  alu alu(.alu_in1(alu_src1), .alu_in2(alu_src2), .alu_out(alu_result), .alu_op(alu_op)); 
+  
+  //stack
+  stack stack(.clk(clk), .rst(rst), .d_in(stack_in), .push(push), .pop(pop), .tos(tos), .d_out(stack_out));
+  
+  
+  
+  
+endmodule

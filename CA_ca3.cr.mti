@@ -1,0 +1,64 @@
+E:/ut/term4/CA/ca/ca3/test_cpu.v {1 {vlog -work work E:/ut/term4/CA/ca/ca3/test_cpu.v
+Model Technology ModelSim ALTERA vlog 10.1d Compiler 2012.11 Nov  2 2012
+-- Compiling module test_cpu
+
+Top level modules:
+	test_cpu
+
+} {} {}} E:/ut/term4/CA/ca/ca3/multiplexer.v {1 {vlog -work work E:/ut/term4/CA/ca/ca3/multiplexer.v
+Model Technology ModelSim ALTERA vlog 10.1d Compiler 2012.11 Nov  2 2012
+-- Compiling module multiplexer
+
+Top level modules:
+	multiplexer
+
+} {} {}} E:/ut/term4/CA/ca/ca3/datapath.v {1 {vlog -work work E:/ut/term4/CA/ca/ca3/datapath.v
+Model Technology ModelSim ALTERA vlog 10.1d Compiler 2012.11 Nov  2 2012
+-- Compiling module datapath
+
+Top level modules:
+	datapath
+
+} {} {}} E:/ut/term4/CA/ca/ca3/controller.v {1 {vlog -work work E:/ut/term4/CA/ca/ca3/controller.v
+Model Technology ModelSim ALTERA vlog 10.1d Compiler 2012.11 Nov  2 2012
+-- Compiling module controller
+
+Top level modules:
+	controller
+
+} {} {}} E:/ut/term4/CA/ca/ca3/cpu.v {1 {vlog -work work E:/ut/term4/CA/ca/ca3/cpu.v
+Model Technology ModelSim ALTERA vlog 10.1d Compiler 2012.11 Nov  2 2012
+-- Compiling module cpu
+
+Top level modules:
+	cpu
+
+} {} {}} E:/ut/term4/CA/ca/ca3/memory.v {1 {vlog -work work E:/ut/term4/CA/ca/ca3/memory.v
+Model Technology ModelSim ALTERA vlog 10.1d Compiler 2012.11 Nov  2 2012
+-- Compiling module memory
+
+Top level modules:
+	memory
+
+} {} {}} E:/ut/term4/CA/ca/ca3/register.v {1 {vlog -work work E:/ut/term4/CA/ca/ca3/register.v
+Model Technology ModelSim ALTERA vlog 10.1d Compiler 2012.11 Nov  2 2012
+-- Compiling module register
+
+Top level modules:
+	register
+
+} {} {}} E:/ut/term4/CA/ca/ca3/stack.v {1 {vlog -work work E:/ut/term4/CA/ca/ca3/stack.v
+Model Technology ModelSim ALTERA vlog 10.1d Compiler 2012.11 Nov  2 2012
+-- Compiling module stack
+
+Top level modules:
+	stack
+
+} {} {}} E:/ut/term4/CA/ca/ca3/alu.v {1 {vlog -work work E:/ut/term4/CA/ca/ca3/alu.v
+Model Technology ModelSim ALTERA vlog 10.1d Compiler 2012.11 Nov  2 2012
+-- Compiling module alu
+
+Top level modules:
+	alu
+
+} {} {}}

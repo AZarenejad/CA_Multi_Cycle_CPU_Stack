@@ -1,0 +1,17 @@
+module alu(alu_in1, alu_in2, alu_out, alu_op);
+  
+  input[7:0] alu_in1, alu_in2;
+  input [1:0] alu_op ;
+  output[7:0] alu_out ;
+  
+  parameter [1:0] add = 2'b00, sub = 2'b01, And = 2'b10, Not = 2'b11 ;
+  
+  assign alu_out =  (alu_op == add) ? alu_in1 + alu_in2 :
+                    (alu_op == sub) ? alu_in1 - alu_in2  :
+                    (alu_op == And) ? alu_in1 & alu_in2  :
+                    (alu_op == Not) ? ~alu_in1  : 8'bz ;
+                  
+    
+endmodule
+    
+

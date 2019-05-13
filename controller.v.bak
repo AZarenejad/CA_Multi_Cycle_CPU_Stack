@@ -1,0 +1,134 @@
+module controller(clk, rst, opcode, IR_write, ld_A, ld_B, IorD, MtoS, src_A, src_B,
+                 pc_src,mem_read, mem_write, pc_write_cond, pc_write, alu_op, push, pop, tos);
+                 
+                 
+  input clk, rst;
+  output reg IR_write, ld_A, ld_B, IorD, MtoS, pc_src, src_A, src_B ;
+  output reg mem_read, mem_write, pc_write_cond, pc_write;
+  output reg [1:0] alu_op;
+  output reg push, pop, tos;
+  input [2:0] opcode ;
+  
+  parameter [2:0] ADD = 3'b000, SUB = 3'b001, AND = 3'b010, NOT = 3'b011, PUSH = 3'b100, POP = 3'b101, JMP = 3'b110, JZ = 3'b111;
+  
+  reg [3:0] ps,ns;
+  
+  parameter [3:0] instruction_fetch = 0, instruction_decode = 1, jump = 2 , jump_zero = 3,
+                  push_read_data = 4, push_data_to_stack = 5, pop_op1 = 6, ld_op1 = 7, pop_save_to_memory = 8,
+                  pop_op2 = 9, ld_op2 = 10, set_alu1 = 11 , set_alu2 = 12, push_alu_result_to_stack = 13 ;
+  
+  
+  always @(ps, opcode) begin
+    ns = instruction_fetch ;
+    case(ps)
+      instruction_fetch : ns = instruction_decode ;
+      instruction_decode :  ns = (opcode == JMP) ? jump :
+                                  (opcode == JZ ) ? jump_zero :
+                                  (opcode == PUSH ) ? push_read_data : pop_op1 ;
+      
+      jump : ns = instruction_fetch ;
+      jump_zero : ns = instruction_fetch ;
+      push_read_data : ns = push_data_to_stack ;
+      push_data_to_stack : ns =  instruction_fetch ;
+      pop_op1 : ns = ld_op1 ;
+      ld_op1 : ns = ( opcode == ADD | opcode == AND | opcode == SUB )  ? pop_op2 :
+                    (opcode == NOT ) ? set_alu2 : pop_save_to_memory ;
+      pop_save_to_memory : ns =  instruction_fetch ;
+      pop_op2 : ns = ld_op2 ;
+      ld_op2 :  ns = set_alu1 ;
+      set_alu1 : ns = push_alu_result_to_stack ;
+      set_alu2 : ns = push_alu_result_to_stack ;
+      push_alu_result_to_stack : ns = instruction_fetch ;
+      default : ns = instruction_fetch ;
+    endcase
+  end
+  
+  always @(ps, opcode ) begin
+    {IR_write, ld_A, ld_B, IorD, MtoS, pc_src, src_A, src_B,
+     mem_read, mem_write, pc_write_cond, pc_write,push, pop, tos, alu_op } = 17'b0;
+     
+     case(ps)
+       instruction_fetch : begin 
+        IorD = 0 ;
+        mem_read = 1 ;
+        IR_write = 1 ; 
+        src_A = 1 ; 
+        src_B = 1 ;
+        pc_src = 0 ;
+        pc_write = 1 ;
+        alu_op = 2'b00 ;
+     end
+     
+     instruction_decode : tos = 1;
+     jump : begin
+        pc_src = 1 ;
+        pc_write = 1 ;
+     end
+     
+     jump_zero : begin
+        pc_write_cond = 1 ;
+        pc_src = 1 ;
+     end
+     
+     push_read_data : begin
+      IorD = 1 ;
+      mem_read = 1;
+     end
+     
+     push_data_to_stack : begin
+      MtoS = 1 ;
+      push = 1 ;
+     end
+     
+     pop_op1 : pop = 1 ;
+     ld_op1 : ld_A = 1 ;
+     pop_save_to_memory : begin
+       IorD = 1 ;
+       mem_write = 1 ;
+     end
+     
+     pop_op2 : pop = 1;
+     ld_op2 : ld_B = 1 ;
+     
+     set_alu1 : alu_op = opcode [1:0] ;
+     
+     set_alu2 : alu_op = 2'b11 ;
+     
+     push_alu_result_to_stack : begin
+       MtoS = 0 ;
+       push = 1 ;
+     end
+     
+   endcase
+ end
+ 
+ always@(posedge clk, posedge rst )begin
+   if (rst) ps<= instruction_fetch ;
+   else
+     ps <= ns ;
+   end
+ endmodule
+     
+     
+     
+     
+     
+     
+     
+     
+     
+       
+    
+    
+  
+      
+                    
+      
+      
+      
+      
+      
+
+      
+      
+                  
